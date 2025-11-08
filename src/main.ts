@@ -9,6 +9,7 @@ import { AppLogger } from '@shared/logger/logger.service';
 import * as path from 'path';
 import * as express from 'express';
 import { json, urlencoded } from 'express';
+import { CompanyCheckGuard } from '@shared/guards/company-check.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -21,6 +22,9 @@ async function bootstrap() {
   const logger = app.get(AppLogger);
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
+  //  const moduleRef = app.select(AppModule);
+  // const guard = moduleRef.get(CompanyCheckGuard);
+  // app.useGlobalGuards(guard);
 
   // 🔐 1. Helmet — basic HTTP header hardening
   app.use(helmet());

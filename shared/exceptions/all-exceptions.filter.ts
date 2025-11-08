@@ -4,9 +4,9 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-} from "@nestjs/common";
-import { Response, Request } from "express";
-import { AppLogger } from "../logger/logger.service";
+} from '@nestjs/common';
+import { Response, Request } from 'express';
+import { AppLogger } from '../logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -16,7 +16,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
     const requestId = (request as any).requestId;
 
     const status =
@@ -27,22 +26,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException
         ? exception.getResponse()
-        : "Internal server error";
+        : 'Internal server error';
 
-    this.logger.error(
-      "Unhandled Exception",
-      exception instanceof Error ? exception.stack : "",
-      {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        requestId,
-        status,
-        message,
-        path: request.url,
-      },
-    );
+    this.logger.error('Unhandled Exception', exception instanceof Error ? exception.stack : '', {
+      requestId,
+      status,
+      message,
+      path: request.url,
+    });
 
     response.status(status).json({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       requestId,
       success: false,
       statusCode: status,

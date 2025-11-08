@@ -4,6 +4,8 @@ import { HealthModule } from './health/health.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerModule } from '@shared/logger/logger.module';
+import { DatabaseModule } from '@shared/database/database.module';
+import { CompanyCheckGuard } from '@shared/guards/company-check.guard';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { LoggerModule } from '@shared/logger/logger.module';
       ],
     }),
     LoggerModule,
+    DatabaseModule,
     FileUploadModule,
     HealthModule
   ],
@@ -24,7 +27,10 @@ import { LoggerModule } from '@shared/logger/logger.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
-    }
+    },
+    CompanyCheckGuard
   ],
+    exports: [CompanyCheckGuard],
+
 })
 export class AppModule { }

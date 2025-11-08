@@ -1,9 +1,10 @@
 // src/file-upload/dto/upload-file.dto.ts
-import { IsNotEmpty, IsOptional, IsString, MaxLength, Validate } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, MaxLength, Validate, ValidateNested } from 'class-validator';
 import { Matches } from 'class-validator';
 import { IsBase64DataUrl } from '@shared/validators/base64-dataurl.validator';
+import { Type } from 'class-transformer';
 
-export class UploadFileDto {
+export class SingleFileDto {
  @IsOptional()
   @IsString()
   @MaxLength(255, { message: 'fileName too long' })
@@ -31,4 +32,13 @@ export class UploadFileDto {
   @MaxLength(100)
   @Matches(/^[a-zA-Z0-9_\-\/]*$/, { message: 'subfolder has invalid characters' })
   subfolder?: string;
+}
+
+
+export class UploadFilesDto {
+  @IsArray({ message: 'files must be an array' })
+  @ArrayMinSize(1, { message: 'At least one file is required' })
+  @ValidateNested({ each: true })
+  @Type(() => SingleFileDto)
+  files!: SingleFileDto[];
 }
