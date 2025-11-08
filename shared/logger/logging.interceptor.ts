@@ -3,11 +3,11 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
-import { v4 as uuidv4 } from 'uuid';
-import { AppLogger } from './logger.service';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map, catchError, tap } from "rxjs/operators";
+import { v4 as uuidv4 } from "uuid";
+import { AppLogger } from "./logger.service";
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -15,23 +15,27 @@ export class LoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const httpContext = context.switchToHttp();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const request = httpContext.getRequest();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = httpContext.getResponse();
 
     const requestId = uuidv4();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     request.requestId = requestId;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { method, url, body, query, params } = request;
     const start = Date.now();
 
-    // this.logger.log('Incoming Request', {
-    //   requestId,
-    //   method,
-    //   url,
-    //   body,
-    //   query,
-    //   params,
-    // });
+    this.logger.log("Incoming Request", {
+      requestId,
+      method,
+      url,
+      body,
+      query,
+      params,
+    });
 
     return next.handle().pipe(
       map((data) => {
@@ -44,7 +48,7 @@ export class LoggingInterceptor implements NestInterceptor {
           duration: `${duration}ms`,
         };
 
-        // this.logger.log('Response Sent', logData);
+        this.logger.log("Response Sent", logData);
 
         return {
           requestId,
@@ -54,7 +58,7 @@ export class LoggingInterceptor implements NestInterceptor {
       }),
       catchError((error) => {
         const duration = Date.now() - start;
-        this.logger.error('Request Failed', error.stack, {
+        this.logger.error("Request Failed", error.stack, {
           requestId,
           method,
           url,
