@@ -20,9 +20,9 @@ export class StreamUploadController {
         // Optional: pull these from req.company (your guard)
         const { organization_name, organization_id } = req.company ?? {};
         const dateDir = new Date().toISOString().split('T')[0];
-        
+
         return await new Promise((resolve, reject) => {
-            const busboy = Busboy({ headers: req.headers, limits: { files: 20 } });
+            const busboy = Busboy({ headers: req.headers, limits: { fileSize: 100 * 1024 * 1024, files: 20 } });
             const fields: Record<string, string> = {};
             const jobs: Promise<any>[] = [];
             let org = organization_name || organization_id;
@@ -30,7 +30,7 @@ export class StreamUploadController {
 
             busboy.on('field', (name, val) => {
                 fields[name] = val;
-       
+
                 if (['organization', 'organizationId', 'companyId'].includes(name)) {
                     org = val;
                 }
@@ -65,7 +65,7 @@ export class StreamUploadController {
             busboy.on('finish', async () => {
                 try {
                     const uploaded = await Promise.all(jobs);
-                   return resolve({
+                    return resolve({
                         fields: {
                             name: fields.name || '',
                             phoneNumber: fields.phoneNumber || '',
@@ -76,7 +76,7 @@ export class StreamUploadController {
                         uploaded,
                     });
                 } catch (e: any) {
-                   return reject(new BadRequestException(e.message));
+                    return reject(new BadRequestException(e.message));
                 }
             });
 
