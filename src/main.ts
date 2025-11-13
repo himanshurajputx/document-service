@@ -9,6 +9,7 @@ import { AppLogger } from '@shared/logger/logger.service';
 import * as express from 'express';
 import { json, urlencoded } from 'express';
 import { CompanyCheckGuard } from '@shared/guards/company-check.guard';
+import { getUploadDir } from '../shared';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -59,8 +60,8 @@ async function bootstrap() {
 
   // ✅ Serve the uploads folder publicly (cross-platform)
 
-  // const uploadsPath = getUploadDir();
-  // app.use('/uploads', express.static(uploadsPath));
+  const uploadsPath = getUploadDir();
+  app.use('/uploads', express.static(uploadsPath));
   // 🚀 Start server
   const port = process.env.PORT || 3000;
   await app.listen(port);
