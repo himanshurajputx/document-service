@@ -381,7 +381,7 @@ __decorate([
     (0, class_validator_1.Validate)(base64_dataurl_validator_1.IsBase64DataUrl, [
         {
             allowRawBase64: true,
-            maxBytes: 10 * 1024 * 1024,
+            maxBytes: 500 * 1024 * 1024,
             allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'],
         },
     ]),
@@ -1481,7 +1481,7 @@ let FileUploadService = class FileUploadService {
             const orgName = organization?.organization_name;
             const orgId = organization?.organization_id;
             for (const file of files) {
-                const maxBytes = (0, file_size_util_1.parseFileSize)(organization?.file_size || '10MB');
+                const maxBytes = (0, file_size_util_1.parseFileSize)(organization?.file_size || '500MB');
                 const allowedTypes = organization?.file_type || [];
                 let subfolder = file?.subfolder || orgName || orgId || 'default';
                 const matches = file.fileContent.match(/^data:(.+);base64,(.+)$/);
