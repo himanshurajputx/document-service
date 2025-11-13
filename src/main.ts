@@ -6,7 +6,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { LoggingInterceptor } from '@shared/logger/logging.interceptor';
 import { AllExceptionsFilter } from '@shared/exceptions/all-exceptions.filter';
 import { AppLogger } from '@shared/logger/logger.service';
-import * as path from 'path';
 import * as express from 'express';
 import { json, urlencoded } from 'express';
 import { CompanyCheckGuard } from '@shared/guards/company-check.guard';
@@ -15,7 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
       origin: ['http://localhost:3000'], // ✅ specify allowed origins
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      methods: ['GET', 'POST', 'DELETE', 'PATCH'],
       credentials: true,
     },
   });
@@ -59,9 +58,9 @@ async function bootstrap() {
   });
 
   // ✅ Serve the uploads folder publicly (cross-platform)
-  const projectRoot = path.resolve(__dirname, '../../');
-  const uploadsPath = path.resolve(projectRoot, '../uploads');
-  app.use('/uploads', express.static(uploadsPath));
+
+  // const uploadsPath = getUploadDir();
+  // app.use('/uploads', express.static(uploadsPath));
   // 🚀 Start server
   const port = process.env.PORT || 3000;
   await app.listen(port);

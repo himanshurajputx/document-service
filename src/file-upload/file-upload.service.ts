@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { parseFileSize } from '@shared/utils/file-size.util';
+import { getUploadDir } from '@shared/utils/upload-dir';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,8 +11,8 @@ export class FileUploadService {
 
   constructor() {
     // Automatically pick a safe parent directory outside project root
-    const projectRoot = path.resolve(__dirname, '../../../../');
-    this.baseUploadDir = path.resolve(projectRoot, '../uploads');
+
+    this.baseUploadDir = getUploadDir();
 
     // Ensure base upload directory exists
     if (!fs.existsSync(this.baseUploadDir)) {
@@ -74,12 +75,14 @@ export class FileUploadService {
 
         // ✅ Step 6: Create date-based subfolder
         const folderName = new Date().toISOString().split('T')[0];
-        let targetDir = path.join(this.baseUploadDir, folderName);
+        // let targetDir = path.join(this.baseUploadDir, folderName);
+        let targetDir;
 
         if (subfolder) {
           const safeSub = subfolder.replace(/[^a-zA-Z0-9_\-/]/g, '').replace(/^\/*|\/*$/g, '');
-          targetDir = path.join(targetDir, safeSub);
+          targetDir = path.join(this.baseUploadDir, safeSub, folderName);
         }
+        
 
         if (!fs.existsSync(targetDir)) {
           fs.mkdirSync(targetDir, { recursive: true });
@@ -95,10 +98,11 @@ export class FileUploadService {
         }
 
         const filePath = path.join(targetDir, safeFileName);
+        
         fs.writeFileSync(filePath, fileBuffer);
 
         // ✅ Step 8: Build relative public URL
-        const relativePath = `/uploads/${folderName}${subfolder ? '/' + subfolder : ''}/${safeFileName}`;
+        const relativePath = `/uploads/${subfolder ? '/' + subfolder : ''}/${safeFileName}`;
         // return relativePath.replace(/\\/g, '/');
         uploaded.push({
           fileName: safeFileName,
