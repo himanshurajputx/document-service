@@ -28,7 +28,7 @@ export class FileUploadService {
   async uploadBase64File(files: { fileName?: string; fileContent: string; subfolder?: string }[], organization?: any): Promise<any> {
     try {
       // ✅ Step 1: Get DB config (from organization or default)
-      
+
       if (!Array.isArray(files) || files.length === 0)
         throw new BadRequestException('No files provided');
 
@@ -39,10 +39,10 @@ export class FileUploadService {
 
 
       for (const file of files) {
-        const maxBytes = parseFileSize(organization?.file_size || '10MB');
+        const maxBytes = parseFileSize(organization?.file_size || '500MB');
         const allowedTypes: string[] = organization?.file_type || [];
 
-        let subfolder = file?.subfolder || orgName || orgId || 'default';        
+        let subfolder = file?.subfolder || orgName || orgId || 'default';
 
         // ✅ Step 2: Decode base64
         const matches = file.fileContent.match(/^data:(.+);base64,(.+)$/);
@@ -82,7 +82,7 @@ export class FileUploadService {
           const safeSub = subfolder.replace(/[^a-zA-Z0-9_\-/]/g, '').replace(/^\/*|\/*$/g, '');
           targetDir = path.join(this.baseUploadDir, safeSub, folderName);
         }
-        
+
 
         if (!fs.existsSync(targetDir)) {
           fs.mkdirSync(targetDir, { recursive: true });
@@ -98,7 +98,7 @@ export class FileUploadService {
         }
 
         const filePath = path.join(targetDir, safeFileName);
-        
+
         fs.writeFileSync(filePath, fileBuffer);
 
         // ✅ Step 8: Build relative public URL
@@ -110,7 +110,7 @@ export class FileUploadService {
         });
 
       }
-       return { uploaded };
+      return { uploaded };
 
     } catch (err) {
       throw new BadRequestException('File upload failed: ' + err.message);

@@ -5,7 +5,7 @@ import { IsBase64DataUrl } from '@shared/validators/base64-dataurl.validator';
 import { Type } from 'class-transformer';
 
 export class SingleFileDto {
- @IsOptional()
+  @IsOptional()
   @IsString()
   @MaxLength(255, { message: 'fileName too long' })
   // Optional pattern check — runs only if fileName exists
@@ -20,7 +20,7 @@ export class SingleFileDto {
   @Validate(IsBase64DataUrl, [
     {
       allowRawBase64: true,
-      maxBytes: 10 * 1024 * 1024, // 10 MB cap
+      maxBytes: 500 * 1024 * 1024, // 500 MB cap
       allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'],
     },
   ])
